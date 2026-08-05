@@ -5,11 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -328,11 +331,11 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable private fun FilterScreen(onClose: () -> Unit) {
     val filters = listOf("Filters", "Sort by", "Budget", "Make & model", "Model year", "Fuel", "Transmission")
     val placeholders = listOf("Search for \"Hyundai Creta\"", "Search for \"Maruti Swift\"", "Search for \"Tata Nexon\"")
     var placeholderIndex by remember { mutableIntStateOf(0) }
-    val scrollState = rememberScrollState()
     
     LaunchedEffect(Unit) {
         while (true) {
@@ -446,7 +449,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
             }
 
             // Scrollable List
-            Column(Modifier.verticalScroll(scrollState)) {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 // Promo Banner (Scrolls away)
                 Box(Modifier.fillMaxWidth().height(200.dp).background(CarsPurple)) {
                     AsyncImage(
