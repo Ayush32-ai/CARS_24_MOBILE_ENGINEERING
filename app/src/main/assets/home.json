@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "components": [
+    {
+      "type": "homeHeader",
+      "props": {
+        "location": "New Delhi",
+        "placeholder": "Search Baleno",
+        "tabs": [
+          { "title": "All", "icon": "▦" },
+          { "title": "Buy used car", "icon": "🚗" },
+          { "title": "Sell car", "icon": "🔑" },
+          { "title": "Loans", "icon": "💰" },
+          { "title": "Challan", "icon": "📜" }
+        ]
+      }
+    },
+    {
+      "type": "tileRail",
+      "props": {
+        "title": "Buy car",
+        "badge": "Up to ₹80,000 off",
+        "items": [
+          { "title": "All used cars", "image": "all_cars", "color": "#103D96" },
+          { "title": "Budget used cars", "image": "budget_cars", "color": "#103D96" },
+          { "title": "Premium used cars", "image": "premium_cars", "color": "#103D96" }
+        ]
+      }
+    },
+    {
+      "type": "tileRail",
+      "props": {
+        "title": "Sell your car",
+        "items": [
+          { "title": "Sell your car", "image": "sell_car", "color": "#287451" },
+          { "title": "Check car valuation", "image": "valuation", "color": "#287451" },
+          { "title": "Scrap your car", "image": "scrap", "color": "#287451" }
+        ]
+      }
+    },
+    {
+      "type": "loanRail",
+      "props": {
+        "title": "Get loans",
+        "items": [
+          { "title": "Used car loan", "icon": "🚙" },
+          { "title": "Loan against car", "icon": "🚗" },
+          { "title": "Personal loan", "icon": "💵" },
+          { "title": "Credit score", "icon": "📈" }
+        ]
+      }
+    },
+    {
+      "type": "serviceGrid",
+      "props": {
+        "title": "Car check services",
+        "items": [
+          { "title": "New car PDI", "icon": "🎁" },
+          { "title": "Used car check", "icon": "🔍" },
+          { "title": "Vehicle history", "icon": "📋" }
+        ]
+      }
+    },
+    {
+      "type": "carRail",
+      "props": {
+        "title": "Used cars you'll love",
+        "viewAllAction": "view_all_used",
+        "items": [
+          {
+            "name": "2015 Hyundai Eon",
+            "variant": "MAGNA +",
+            "specs": "43,518 km  Petrol  Manual  DL8C",
+            "price": "₹1.72 lakh",
+            "emi": "₹4,529/m*",
+            "image": "eon",
+            "color": "#F3F6FC"
+          },
+          {
+            "name": "2017 Maruti Swift",
+            "variant": "LXI (O)",
+            "specs": "79,321 km  Petrol  Manual  UP16",
+            "price": "₹2.23 lakh",
+            "emi": "₹4,350/m*",
+            "image": "swift",
+            "color": "#F3F6FC"
+          }
+        ]
+      }
+    },
+    {
+      "type": "vehicleGrid",
+      "props": {
+        "title": "Manage your vehicle",
+        "actionText": "+ Add vehicle",
+        "items": [
+          { "title": "Pay challan", "icon": "🧾" },
+          { "title": "Recharge FASTag", "icon": "🏷️" },
+          { "title": "Get insurance", "icon": "🚙" },
+          { "title": "Cash against car", "icon": "💰" },
+          { "title": "Road side assistance", "icon": "🚨" },
+          { "title": "Get warranty", "icon": "🛡️" }
+        ]
+      }
+    },
+    {
+      "type": "promoBanner",
+      "props": {
+        "eyebrow": "CARS24 × SPOTIFY PREMIUM",
+        "title": "Add your car to Orbit",
+        "subtitle": "Enjoy 3-months Spotify Premium free",
+        "action": "Add car now",
+        "image": "spotify_promo",
+        "color": "#123E2A"
+      }
+    },
+    {
+      "type": "showroomRail",
+      "props": {
+        "title": "2 showrooms in your city",
+        "items": [
+          {
+            "name": "DLF South Court",
+            "cars": "60+ cars",
+            "address": "Saket, Delhi",
+            "distance": "9.5 km from India Gate | Get directions",
+            "status": "Closed",
+            "timing": "Opens at 10:00 AM",
+            "color": "#E8E2D3"
+          },
+          {
+            "name": "Rajouri Garden",
+            "cars": "90+ cars",
+            "address": "New Delhi",
+            "distance": "11.3 km from India Gate",
+            "status": "Closed",
+            "timing": "Opens at 10:00 AM",
+            "color": "#D8E7E1"
+          }
+        ]
+      }
+    },
+    {
+      "type": "trendingRail",
+      "props": {
+        "title": "Trending new cars",
+        "items": [
+          { "name": "Seltos", "brand": "Kia", "rank": "1" },
+          { "name": "Sonet", "brand": "Kia", "rank": "2" },
+          { "name": "Syros", "brand": "Kia", "rank": "3" }
+        ]
+      }
+    },
+    {
+      "type": "matchBanner",
+      "props": {
+        "title": "Let us find your match",
+        "subtitle": "Answer a few simple questions and get your perfect car match in 60 seconds.",
+        "action": "Find my perfect match",
+        "color": "#FFFFFF"
+      }
+    },
+    {
+      "type": "promoBanner",
+      "props": {
+        "eyebrow": "CRASHFREE INDIA",
+        "title": "Control. Judgment. Patience.",
+        "subtitle": "India drives safer with M.S Dhoni",
+        "action": "Explore now",
+        "icon": "🏏",
+        "color": "#5747FF"
+      }
+    },
+    {
+      "type": "unknownComponent",
+      "props": { "text": "This should not crash the app" }
+    },
+    {
+      "type": "brandFooter",
+      "props": {
+        "title": "better drives,\nbetter lives",
+        "subtitle": "Made with ❤️ in Gurugram"
+      }
+    }
+  ]
+}
