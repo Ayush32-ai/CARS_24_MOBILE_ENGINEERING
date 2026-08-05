@@ -9,56 +9,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.DirectionsCar
-import androidx.compose.material.icons.outlined.Explore
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Storefront
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.cars24sdui.actions.ActionHandler
 import com.example.cars24sdui.model.Screen
 import com.example.cars24sdui.parser.JsonLoader
@@ -67,8 +42,9 @@ import com.example.cars24sdui.ui.theme.Cars24SDUITheme
 import com.example.cars24sdui.ui.theme.CarsDimens
 import com.example.cars24sdui.ui.theme.CarsPurple
 import com.example.cars24sdui.ui.theme.PageInk
+import com.example.cars24sdui.ui.theme.MutedInk
 
-private val NavInactive = androidx.compose.ui.graphics.Color(0xFF9CA3AF)
+private val NavInactive = Color(0xFF9CA3AF)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -175,7 +151,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
             Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(bottom = 12.dp) // Added bottom padding for the whole container
+                .padding(bottom = 12.dp)
         ) {
             // Location and Profile (Always visible)
             Row(
@@ -210,7 +186,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                         )
                         Spacer(Modifier.width(6.dp))
                         Icon(
-                            androidx.compose.material.icons.Icons.Default.KeyboardArrowDown,
+                            Icons.Default.KeyboardArrowDown,
                             null,
                             tint = White,
                             modifier = Modifier.size(20.dp)
@@ -315,7 +291,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                                 Box(contentAlignment = Alignment.Center) {
                                     if (tab["title"] == "All") {
                                         Icon(
-                                            androidx.compose.material.icons.Icons.Default.GridView,
+                                            Icons.Default.GridView,
                                             null,
                                             tint = CarsPurple,
                                             modifier = Modifier.size(28.dp)
@@ -352,35 +328,165 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
 }
 
 @Composable private fun FilterScreen(onClose: () -> Unit) {
-    val filters = listOf("SUV", "Hatchback", "Sedan", "Automatic", "Petrol", "Under ₹5 lakh")
-    var selected by remember { mutableStateOf(setOf<String>()) }
-    Column(Modifier.fillMaxSize().padding(22.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text("Filters", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("Close", color = CarsPurple, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onClose))
-        }
-        Text("Find the car that fits your needs", fontSize = 15.sp, color = NavInactive)
-        filters.forEach { filter ->
-            OutlinedButton(
-                onClick = { selected = if (filter in selected) selected - filter else selected + filter },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = if (filter in selected) CarsPurple else PageInk,
-                    containerColor = if (filter in selected) CarsPurple.copy(alpha = 0.1f) else androidx.compose.ui.graphics.Color.Transparent
-                ),
-                border = androidx.compose.foundation.BorderStroke(1.dp, if (filter in selected) CarsPurple else NavInactive.copy(alpha = 0.5f))
-            ) {
-                Text(if (filter in selected) "✓  $filter" else filter)
+    val filters = listOf("Filters", "Sort by", "Budget", "Make & model", "Model year", "Fuel", "Transmission")
+    Column(Modifier.fillMaxSize().background(Color(0xFFF7F8FA))) {
+        // High fidelity Header
+        Surface(color = CarsPurple, modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.statusBarsPadding().padding(bottom = 16.dp)) {
+                Row(
+                    Modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.ArrowBack, null, tint = White, modifier = Modifier.size(24.dp).clickable { onClose() })
+                    Spacer(Modifier.width(12.dp))
+                    Text("New Delhi ⌄", color = White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                    Icon(Icons.Outlined.FavoriteBorder, null, tint = White, modifier = Modifier.size(24.dp))
+                }
+                
+                // Search Box
+                Surface(
+                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    color = White
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)) {
+                        Icon(Icons.Default.Search, null, tint = PageInk.copy(0.6f), modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("Search for \"Hyundai Creta\"", color = PageInk.copy(0.6f), fontSize = 15.sp)
+                    }
+                }
             }
         }
-        Spacer(Modifier.weight(1f))
-        Button(
-            onClick = onClose,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = CarsPurple),
-            shape = RoundedCornerShape(12.dp)
+
+        // Horizontal Filter Chips
+        Row(
+            Modifier.fillMaxWidth().background(White).padding(vertical = 12.dp).horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Show ${if (selected.isEmpty()) "all" else selected.size} cars", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            filters.forEachIndexed { index, filter ->
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray.copy(0.5f)),
+                    color = White
+                ) {
+                    Row(
+                        Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (index == 0) Icon(Icons.Default.Tune, null, tint = CarsPurple, modifier = Modifier.size(18.dp))
+                        if (index == 1) Icon(Icons.Default.Sort, null, tint = CarsPurple, modifier = Modifier.size(18.dp))
+                        if (index <= 1) Spacer(Modifier.width(6.dp))
+                        Text(filter, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        Spacer(Modifier.width(4.dp))
+                        Icon(Icons.Default.KeyboardArrowDown, null, tint = PageInk.copy(0.6f), modifier = Modifier.size(16.dp))
+                    }
+                }
+            }
+        }
+
+        // Result Count
+        Text(
+            "3266 Used cars available in New Delhi",
+            modifier = Modifier.padding(16.dp),
+            fontSize = 13.sp,
+            color = MutedInk,
+            fontWeight = FontWeight.Medium
+        )
+
+        // Car List
+        Column(Modifier.verticalScroll(rememberScrollState())) {
+            repeat(3) {
+                SearchResultCard()
+                Spacer(Modifier.height(12.dp))
+            }
+        }
+    }
+    
+    // FAB
+    Box(Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.align(Alignment.BottomEnd).padding(24.dp).size(56.dp),
+            shape = CircleShape,
+            color = Color(0xFF5747FF),
+            shadowElevation = 6.dp
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(Icons.Default.AutoAwesome, null, tint = White, modifier = Modifier.size(24.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchResultCard() {
+    Card(
+        Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = White),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column {
+            Box(Modifier.fillMaxWidth().height(180.dp).background(Color(0xFFF3F6FC))) {
+                AsyncImage(
+                    model = "https://picsum.photos/seed/car/800/400",
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                )
+                Icon(
+                    Icons.Outlined.FavoriteBorder,
+                    null,
+                    tint = MutedInk,
+                    modifier = Modifier.align(Alignment.TopEnd).padding(12.dp).size(24.dp)
+                )
+            }
+            
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Budget", color = MutedInk, fontSize = 12.sp, modifier = Modifier.background(Color(0xFFF1F5FF), RoundedCornerShape(4.dp)).padding(horizontal = 6.dp, vertical = 2.dp))
+                    Spacer(Modifier.weight(1f))
+                    Surface(color = Color(0xFFF0ECFF), shape = RoundedCornerShape(10.dp)) {
+                        Text("Cars24 Owned stock", color = CarsPurple, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
+                    }
+                }
+                
+                Spacer(Modifier.height(8.dp))
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text("2015 Hyundai Eon", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text("MAGNA +", color = MutedInk, fontSize = 13.sp)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("₹1.72 lakh", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text("+other charges", color = MutedInk, fontSize = 10.sp)
+                    }
+                }
+                
+                Spacer(Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("43,518 km  Petrol  Manual  DL8C", color = MutedInk, fontSize = 12.sp)
+                    Spacer(Modifier.weight(1f))
+                    Text("EMI ₹4,529/m* >", color = PageInk, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                }
+                
+                Spacer(Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val badges = listOf("✓ Lifetime warranty", "🔄 30 days return", "📋 300+ quality")
+                    badges.forEach { badge ->
+                        Surface(color = Color(0xFFF7F8FA), shape = RoundedCornerShape(4.dp)) {
+                            Text(badge, fontSize = 10.sp, color = PageInk.copy(0.7f), modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
+                        }
+                    }
+                }
+                
+                Spacer(Modifier.height(16.dp))
+                androidx.compose.material3.HorizontalDivider(color = Color.LightGray.copy(0.3f))
+                Row(Modifier.fillMaxWidth().height(48.dp)) {
+                    Text("Free Test Drive", modifier = Modifier.weight(1f).fillMaxHeight().clickable {}.wrapContentSize(Alignment.Center), color = CarsPurple, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Box(Modifier.width(1.dp).fillMaxHeight().background(Color.LightGray.copy(0.3f)))
+                    Text("View Details", modifier = Modifier.weight(1f).fillMaxHeight().clickable {}.wrapContentSize(Alignment.Center), color = CarsPurple, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                }
+            }
         }
     }
 }
@@ -396,7 +502,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
     )
 
     NavigationBar(
-        containerColor = androidx.compose.ui.graphics.Color.White,
+        containerColor = White,
         contentColor = NavInactive
     ) {
         destinations.forEachIndexed { index, destination ->
@@ -423,7 +529,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                     selectedTextColor = CarsPurple,
                     unselectedIconColor = NavInactive,
                     unselectedTextColor = NavInactive,
-                    indicatorColor = androidx.compose.ui.graphics.Color.Transparent
+                    indicatorColor = Color.Transparent
                 )
             )
         }
