@@ -36,19 +36,7 @@ import androidx.compose.material.icons.outlined.DirectionsCar
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Storefront
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -90,11 +78,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable fun Cars24App() {
     val context = LocalContext.current
     var state by remember { mutableStateOf<Result<Screen>?>(null) }
     var showFilters by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    val sheetState = rememberModalBottomSheetState()
 
     LaunchedEffect(Unit) { state = JsonLoader(context).loadHome() }
 
@@ -121,19 +112,54 @@ class MainActivity : ComponentActivity() {
                             // Header stays on top
                             header?.let {
                                 StickyHomeHeader(it.props, scrollState, onAction = { action ->
-                                    if (action == "filter") showFilters = true else ActionHandler(context).dispatch(action)
+                                    when (action) {
+                                        "filter" -> showFilters = true
+                                        "open_showroom_sheet" -> showBottomSheet = true
+                                        else -> ActionHandler(context).dispatch(action)
+                                    }
                                 })
                             }
                             // Rest of the content scrolls
                             Column(Modifier.verticalScroll(scrollState)) {
                                 ScreenRenderer(Screen(otherComponents), onAction = { action ->
-                                    if (action == "view_all_used" || action == "filter") showFilters = true
-                                    else ActionHandler(context).dispatch(action)
+                                    when (action) {
+                                        "view_all_used" -> showFilters = true
+                                        "open_showroom_sheet" -> showBottomSheet = true
+                                        else -> ActionHandler(context).dispatch(action)
+                                    }
                                 })
                             }
                         }
                     }
                 }, onFailure = { Text("We couldn't load the home screen.") })
+            }
+
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomSheet = false },
+                    sheetState = sheetState,
+                    containerColor = White
+                ) {
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Showroom Details", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(16.dp))
+                        Text("Visit us to explore 50+ certified cars.", textAlign = TextAlign.Center)
+                        Spacer(Modifier.height(24.dp))
+                        Button(
+                            onClick = { showBottomSheet = false },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = CarsPurple)
+                        ) {
+                            Text("Got it")
+                        }
+                        Spacer(Modifier.height(40.dp))
+                    }
+                }
             }
         }
     }

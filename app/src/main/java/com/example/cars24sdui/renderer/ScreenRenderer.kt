@@ -656,7 +656,7 @@ private fun ShowroomRail(props: Map<String, Any?>, onAction: (String) -> Unit) {
                         Spacer(Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(
-                                onClick = { onAction("call") },
+                                onClick = { onAction(shop.text("secondaryAction")) },
                                 modifier = Modifier.weight(1f),
                                 border = androidx.compose.foundation.BorderStroke(1.dp, CarsPurple),
                                 contentPadding = PaddingValues(0.dp)
@@ -664,7 +664,7 @@ private fun ShowroomRail(props: Map<String, Any?>, onAction: (String) -> Unit) {
                                 Text("📞 Call us now", fontSize = 12.sp, color = CarsPurple)
                             }
                             Button(
-                                onClick = { onAction("view_showroom") },
+                                onClick = { onAction(shop.text("primaryAction")) },
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.buttonColors(containerColor = CarsPurple),
                                 contentPadding = PaddingValues(0.dp)

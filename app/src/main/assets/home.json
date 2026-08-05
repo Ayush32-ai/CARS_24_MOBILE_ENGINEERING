@@ -133,7 +133,9 @@
             "distance": "9.5 km from India Gate | Get directions",
             "status": "Closed",
             "timing": "Opens at 10:00 AM",
-            "color": "#E8E2D3"
+            "color": "#E8E2D3",
+            "primaryAction": "open_showroom_sheet",
+            "secondaryAction": "call_expert"
           },
           {
             "name": "Rajouri Garden",
@@ -142,7 +144,9 @@
             "distance": "11.3 km from India Gate",
             "status": "Closed",
             "timing": "Opens at 10:00 AM",
-            "color": "#D8E7E1"
+            "color": "#D8E7E1",
+            "primaryAction": "open_showroom_sheet",
+            "secondaryAction": "call_expert"
           }
         ]
       }
