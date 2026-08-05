@@ -360,7 +360,16 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                             }
                         }
                         Spacer(Modifier.width(12.dp))
-                        Text("New Delhi ⌄", color = White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                            Text("New Delhi", color = White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.width(6.dp))
+                            Icon(
+                                Icons.Default.KeyboardArrowDown,
+                                null,
+                                tint = White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                         Surface(
                             shape = CircleShape,
                             color = White.copy(alpha = 0.15f),
