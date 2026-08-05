@@ -2,6 +2,7 @@ package com.example.cars24sdui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.*
@@ -333,6 +334,7 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable private fun FilterScreen(onClose: () -> Unit) {
+    BackHandler { onClose() }
     val filters = listOf("Filters", "Sort by", "Budget", "Make & model", "Model year", "Fuel", "Transmission")
     val placeholders = listOf("Search for \"Hyundai Creta\"", "Search for \"Maruti Swift\"", "Search for \"Tata Nexon\"")
     var placeholderIndex by remember { mutableIntStateOf(0) }
