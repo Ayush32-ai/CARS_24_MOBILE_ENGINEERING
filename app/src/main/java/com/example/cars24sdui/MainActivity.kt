@@ -330,6 +330,16 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
 
 @Composable private fun FilterScreen(onClose: () -> Unit) {
     val filters = listOf("Filters", "Sort by", "Budget", "Make & model", "Model year", "Fuel", "Transmission")
+    val placeholders = listOf("Search for \"Hyundai Creta\"", "Search for \"Maruti Swift\"", "Search for \"Tata Nexon\"")
+    var placeholderIndex by remember { mutableIntStateOf(0) }
+    
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(2500)
+            placeholderIndex = (placeholderIndex + 1) % placeholders.size
+        }
+    }
+
     Column(Modifier.fillMaxSize().background(Color(0xFFF7F8FA))) {
         // High fidelity Header
         Surface(color = CarsPurple, modifier = Modifier.fillMaxWidth()) {
@@ -338,23 +348,95 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                     Modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.ArrowBack, null, tint = White, modifier = Modifier.size(24.dp).clickable { onClose() })
+                    Surface(
+                        shape = CircleShape,
+                        color = White.copy(alpha = 0.15f),
+                        modifier = Modifier.size(36.dp).clickable { onClose() }
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.Default.ArrowBack, null, tint = White, modifier = Modifier.size(20.dp))
+                        }
+                    }
                     Spacer(Modifier.width(12.dp))
                     Text("New Delhi ⌄", color = White, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                    Icon(Icons.Outlined.FavoriteBorder, null, tint = White, modifier = Modifier.size(24.dp))
+                    Surface(
+                        shape = CircleShape,
+                        color = White.copy(alpha = 0.15f),
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.Outlined.FavoriteBorder, null, tint = White, modifier = Modifier.size(20.dp))
+                        }
+                    }
                 }
                 
-                // Search Box
+                // Search Box with Animation
                 Surface(
                     modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(48.dp),
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(24.dp),
                     color = White
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)) {
-                        Icon(Icons.Default.Search, null, tint = PageInk.copy(0.6f), modifier = Modifier.size(20.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("Search for \"Hyundai Creta\"", color = PageInk.copy(0.6f), fontSize = 15.sp)
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Icon(Icons.Default.Search, null, tint = CarsPurple, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(12.dp))
+                        AnimatedContent(
+                            targetState = placeholders[placeholderIndex],
+                            transitionSpec = {
+                                (slideInVertically { height -> height } + fadeIn())
+                                    .togetherWith(slideOutVertically { height -> -height } + fadeOut())
+                            },
+                            label = "FilterPlaceholderAnimation"
+                        ) { targetPlaceholder ->
+                            Text(
+                                targetPlaceholder,
+                                color = PageInk.copy(0.6f),
+                                fontSize = 15.sp,
+                                maxLines = 1
+                            )
+                        }
                     }
+                }
+            }
+        }
+
+        // Promo Banner Area
+        Box(Modifier.fillMaxWidth().height(200.dp).background(CarsPurple)) {
+            // Background image (Woman with fan and car)
+            AsyncImage(
+                model = "https://picsum.photos/seed/cars24banner/800/400",
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            
+            // Content
+            Column(Modifier.padding(20.dp).align(Alignment.CenterStart)) {
+                Surface(color = Color.Black.copy(0.7f), shape = RoundedCornerShape(4.dp)) {
+                    Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.AllInclusive, null, tint = Color(0xFF4CAF50), modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("LIFETIME WARRANTY", color = White, fontSize = 12.sp, fontWeight = FontWeight.Black)
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    "India's first warranty that lasts\nas long as your car",
+                    color = White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 20.sp
+                )
+                Spacer(Modifier.height(12.dp))
+                Text("Know more →", color = White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            }
+            
+            // Dots
+            Row(
+                Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                repeat(3) { i ->
+                    Box(Modifier.size(if (i == 0) 6.dp else 4.dp).clip(CircleShape).background(if (i == 0) White else White.copy(0.5f)))
                 }
             }
         }
@@ -368,15 +450,24 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                 Surface(
                     shape = RoundedCornerShape(20.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray.copy(0.5f)),
-                    color = White
+                    color = if (index < 2) CarsPurple.copy(0.05f) else White
                 ) {
                     Row(
                         Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (index == 0) Icon(Icons.Default.Tune, null, tint = CarsPurple, modifier = Modifier.size(18.dp))
-                        if (index == 1) Icon(Icons.Default.Sort, null, tint = CarsPurple, modifier = Modifier.size(18.dp))
-                        if (index <= 1) Spacer(Modifier.width(6.dp))
+                        if (index == 0) {
+                            Surface(color = CarsPurple, shape = CircleShape, modifier = Modifier.size(20.dp)) {
+                                Icon(Icons.Default.Tune, null, tint = White, modifier = Modifier.padding(4.dp))
+                            }
+                            Spacer(Modifier.width(6.dp))
+                        }
+                        if (index == 1) {
+                            Surface(color = Color(0xFF5747FF), shape = CircleShape, modifier = Modifier.size(20.dp)) {
+                                Icon(Icons.Default.Sort, null, tint = White, modifier = Modifier.padding(4.dp))
+                            }
+                            Spacer(Modifier.width(6.dp))
+                        }
                         Text(filter, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         Spacer(Modifier.width(4.dp))
                         Icon(Icons.Default.KeyboardArrowDown, null, tint = PageInk.copy(0.6f), modifier = Modifier.size(16.dp))
