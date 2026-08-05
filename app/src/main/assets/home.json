@@ -6,6 +6,13 @@
       "props": {
         "location": "New Delhi",
         "placeholder": "Search Baleno",
+        "placeholders": [
+          "Search Baleno",
+          "Search Alto",
+          "Search Creta",
+          "Search Swift",
+          "Search Ertiga"
+        ],
         "tabs": [
           { "title": "All", "icon": "▦" },
           { "title": "Buy used car", "icon": "🚗" },

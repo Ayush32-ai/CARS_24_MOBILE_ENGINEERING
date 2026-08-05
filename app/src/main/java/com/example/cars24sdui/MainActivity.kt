@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -236,12 +237,21 @@ fun StickyHomeHeader(props: Map<String, Any?>, scrollState: androidx.compose.fou
                         Spacer(Modifier.width(8.dp))
                         Box(contentAlignment = Alignment.CenterStart) {
                             if (search.isEmpty()) {
-                                Text(
-                                    placeholders[placeholderIndex],
-                                    color = White.copy(.6f),
-                                    fontSize = 14.sp,
-                                    maxLines = 1
-                                )
+                                AnimatedContent(
+                                    targetState = placeholders[placeholderIndex],
+                                    transitionSpec = {
+                                        (slideInVertically { height -> height } + fadeIn())
+                                            .togetherWith(slideOutVertically { height -> -height } + fadeOut())
+                                    },
+                                    label = "PlaceholderAnimation"
+                                ) { targetPlaceholder ->
+                                    Text(
+                                        targetPlaceholder,
+                                        color = White.copy(.6f),
+                                        fontSize = 14.sp,
+                                        maxLines = 1
+                                    )
+                                }
                             }
                             innerTextField()
                         }

@@ -1,5 +1,12 @@
 package com.example.cars24sdui.renderer
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,10 +44,13 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -152,10 +162,10 @@ private fun HomeHeader(props: Map<String, Any?>, onAction: (String) -> Unit) {
                     Text("⌕", color = White.copy(.6f), fontSize = CarsDimens.searchIconSize)
                 },
                 placeholder = {
-                    Text(
-                        props.text("placeholder"),
-                        color = White.copy(.55f),
-                        fontSize = CarsDimens.searchTextSize
+                    AnimatedSearchPlaceholder(
+                        placeholders = props.strings("placeholders").ifEmpty {
+                            listOf(props.text("placeholder"))
+                        }
                     )
                 }
             )
@@ -203,6 +213,42 @@ private fun HomeHeader(props: Map<String, Any?>, onAction: (String) -> Unit) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AnimatedSearchPlaceholder(placeholders: List<String>) {
+    val items = placeholders.filter { it.isNotBlank() }.ifEmpty { listOf("Search cars") }
+    var index by remember(items) { mutableIntStateOf(0) }
+
+    LaunchedEffect(items) {
+        while (true) {
+            delay(2500)
+            index = (index + 1) % items.size
+        }
+    }
+
+    Box(Modifier.height(CarsDimens.searchTextSize.value.dp + 4.dp)) {
+        AnimatedContent(
+            targetState = index,
+            transitionSpec = {
+                slideInVertically(
+                    animationSpec = tween(350),
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ) + fadeIn(tween(350)) togetherWith
+                    slideOutVertically(
+                        animationSpec = tween(350),
+                        targetOffsetY = { fullHeight -> -fullHeight }
+                    ) + fadeOut(tween(200))
+            },
+            label = "search_placeholder"
+        ) { currentIndex ->
+            Text(
+                items[currentIndex],
+                color = White.copy(.55f),
+                fontSize = CarsDimens.searchTextSize
+            )
         }
     }
 }
@@ -803,6 +849,8 @@ private fun carDrawable(imageKey: String): Int = when (imageKey) {
 }
 
 private fun Map<String, Any?>.text(key: String) = this[key] as? String ?: ""
+private fun Map<String, Any?>.strings(key: String) =
+    (this[key] as? List<*>)?.mapNotNull { it as? String }.orEmpty()
 private fun Map<String, Any?>.maps(key: String) = (this[key] as? List<*>)?.mapNotNull { it as? Map<String, Any?> }.orEmpty()
 private fun Map<String, Any?>.color(key: String, fallback: Color) =
     (this[key] as? String)?.let { runCatching { Color(android.graphics.Color.parseColor(it)) }.getOrNull() } ?: fallback
