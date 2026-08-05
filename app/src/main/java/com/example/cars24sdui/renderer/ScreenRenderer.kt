@@ -779,13 +779,13 @@ private fun BrandFooter(props: Map<String, Any?>) {
                 Text(
                     "Made with ",
                     color = White.copy(alpha = 0.8f),
-                    fontSize = 15.sp
+                    fontSize = 22.sp
                 )
-                Text("❤️", fontSize = 14.sp)
+                Text("❤️", fontSize = 20.sp)
                 Text(
                     " in Gurugram",
                     color = White.copy(alpha = 0.8f),
-                    fontSize = 15.sp
+                    fontSize = 22.sp
                 )
             }
         }
